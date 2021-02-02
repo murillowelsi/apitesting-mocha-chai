@@ -65,7 +65,7 @@ describe('get', () => {
                     expect(res).to.has.status(200);
                     expect(res.body.bookings.bookingRef).to.equal(bookingRef)
                     done();
-                })
+                });
         });
     });
 });
