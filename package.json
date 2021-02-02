@@ -17,7 +17,8 @@
   "author": "Murillo Welsi",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.18.3"
+    "body-parser": "^1.18.3",
+    "js-yaml": "^4.0.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",

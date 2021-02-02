@@ -1,10 +1,17 @@
-var chai = require('chai'), 
+const chai = require('chai'), 
     chaiHttp = require('chai-http');
+
+const yaml = require('js-yaml');
+const fs   = require('fs');
+
+const env = yaml.load(fs.readFileSync(`env/${process.env.NODE_ENV}.yml`, 'utf8'));
+const baseUri = env.base_uri
+
+console.log(baseUri)
 
 chai.use(chaiHttp);
 
-const devBaseUrl = 'https://test-uk.tda.tui-api.com'
-const request = chai.request.agent(`${devBaseUrl}`);
+const request = chai.request.agent(`${baseUri}`);
 const expect = chai.expect;
 
 
