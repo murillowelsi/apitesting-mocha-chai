@@ -1,25 +1,18 @@
-const chai = require('chai'), 
-    chaiHttp = require('chai-http');
-
+const expect  = require('chai').expect
 const yaml = require('js-yaml');
 const fs   = require('fs');
+const AuthService = require('../services/auth-service');
+const BookingsService = require('../services/bookings-service');
 
-const env = yaml.load(fs.readFileSync(`env/${process.env.NODE_ENV}.yml`, 'utf8'));
-const baseUri = env.base_uri
-
-console.log(baseUri)
-
-chai.use(chaiHttp);
-
-const request = chai.request.agent(`${baseUri}`);
-const expect = chai.expect;
-
+const data = yaml.load(fs.readFileSync(`fixtures/bookingInfo.yml`, 'utf8'));
 
 let mwtoken;
-
 describe('get', () => {
+
     context('get token', () => {
-        before((done) => {
+        before(async () => {
+            const auth = new AuthService();
+
             let headers = {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'app-name': 'tui-uk-th',
@@ -32,24 +25,21 @@ describe('get', () => {
             };
 
             let query = {
-                id: 11257313,
+                id: data.bookings[0].bookingRef,
                 additionalInfo: 'Stratton',
                 departureDate: '2021-01-12'
             }
 
-            request
-                .get('/api/auth/requestToken')
-                .query(query)
-                .set(headers)
-                .end((err, res) => {
-                    expect(res).to.has.status(200);
-                    mwtoken = res.headers['mw-token'];
-                    done();
-                })
+            let res = await auth.getMwToken(query, headers)
+            mwtoken = res.headers['mw-token'];
+            expect(res).to.has.status(200);
         });
 
-        it('should get contact us endpoint', (done) => {
-            let bookingRef = '11257313'
+        it('should get contact us endpoint', async () => {
+            const bookings = new BookingsService();
+
+            let bookingRef = data.bookings[0].bookingRef
+
             let headers = {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'app-name': 'tui-uk-th',
@@ -65,14 +55,9 @@ describe('get', () => {
                 'correlation-id': '21f75c3a-e570-47d8-81f1-765380f261cb-Refresh Token'
             };
 
-            request
-                .get(`/api/v2/bookings/${bookingRef}/contact`)
-                .set(headers)
-                .end((err, res) => {
-                    expect(res).to.has.status(200);
-                    expect(res.body.bookings.bookingRef).to.equal(bookingRef)
-                    done();
-                });
+            res = await bookings.getBookingById(bookingRef, headers)
+            expect(res).to.has.status(200);
+            expect(res.body.bookings.booking[0].reservationCode).to.equals('11257313')
         });
     });
 });

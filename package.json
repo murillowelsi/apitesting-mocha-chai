@@ -2,13 +2,11 @@
   "name": "poc-api-testing",
   "version": "1.0.0",
   "description": "API para cadastro de tarefas",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
-    "start": "babel-node app.js",
-    "dev": "nodemon --exec babel-node app.js",
-    "test": "NODE_ENV=dev mocha test/getToken.spec",
-    "test:ci": "npm run dropdb_unix & NODE_ENV=dev mocha test test --reporter mocha-junit-reporter --reporter-options mochaFile=./log/report.xml --require babel-register --timeout 10000 --exit",
-    "dropdb_unix": "./scripts/dropdb.sh"
+    "start": "",
+    "dev": "",
+    "test": "NODE_ENV=dev mocha test"
   },
   "keywords": [
     "api",
